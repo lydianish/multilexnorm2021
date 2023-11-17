@@ -7,11 +7,11 @@ trainer:
     total_batch_size: 32
 
 dataset:
-    language: TO-BE-SUPPLIED
+    language: en
     batch_size: 32
     threads: 1
-    tokenizer: TO-BE-SUPPLIED
+    tokenizer: /gpfswork/rech/rnh/udc54vm/multilexnorm2021/model/ufal/byt5-small-multilexnorm2021-en
 
 model:
-    pretrained_lm: TO-BE-SUPPLIED
+    pretrained_lm: /gpfswork/rech/rnh/udc54vm/multilexnorm2021/model/ufal/byt5-small-multilexnorm2021-en
     n_beams: 16
