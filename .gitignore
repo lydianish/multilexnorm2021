@@ -1,7 +1,14 @@
 wandb/
+logs/
 outputs/
+*outputs.txt
+checkpoints/
+data/multilexnorm/
+data/wiki/
 data/wikitext-103/
 data/lexnorm/
+data/noise/*.json
+model/*/
 LEX-NORM.o*
 .vscode/
 

@@ -57,7 +57,7 @@ class Model(pl.LightningModule):
         loss = self.forward(batch)
 
         logs = {"loss": loss, "real_step": self.step}
-        self.log_dict({f"train/{k}": v for k, v in logs.items()}, on_step=True, on_epoch=False)
+        self.log_dict({f"train/{k}": v for k, v in logs.items()}, on_step=True, on_epoch=False, sync_dist=True)
 
         return loss
 
@@ -69,7 +69,7 @@ class Model(pl.LightningModule):
         out_dict = self.generate(batch)
 
         logs = {"loss": loss}
-        self.log_dict({f"valid/{k}": v for k, v in logs.items()})
+        self.log_dict({f"valid/{k}": v for k, v in logs.items()}, sync_dist=True)
 
         return out_dict
 
