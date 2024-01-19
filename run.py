@@ -5,8 +5,8 @@ import math
 warnings.filterwarnings('ignore')
 
 import sys
-sys.path.append("/home/lnishimw/scratch/multilexnorm2021")
-#sys.path.append("/gpfswork/rech/rnh/udc54vm/multilexnorm2021")
+#sys.path.append("/home/lnishimw/scratch/multilexnorm2021")
+sys.path.append("/gpfswork/rech/rnh/udc54vm/multilexnorm2021")
 
 
 from config.params import Params
@@ -39,6 +39,7 @@ sentences = [
     "scond one .",
     "and yet another one of them sentencesss"
 ]
+#sentences = ["yo hv to let ppl decide wat dey wanna do"]
 
 tokens = [tokenizeRawTweetText(sentence) for sentence in sentences]
 
