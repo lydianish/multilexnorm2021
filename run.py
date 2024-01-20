@@ -100,11 +100,11 @@ args = Params().load(["--config", "config/inference.yaml"])
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 sentences = [
+    "yo hv to let ppl decide wat dey wanna do",
     "fyrst sntnce",
     "scond one .",
     "and yet another one of them sentencesss"
 ]
-#sentences = ["yo hv to let ppl decide wat dey wanna do"]
 
 tokens = [tokenizeRawTweetText(sentence) for sentence in sentences]
 
@@ -120,6 +120,6 @@ for i, batch in enumerate(data.dataloader):
 
 assembler.flush()
 
-with open("outputs/outputs.txt") as f:
+with open("outputs.txt") as f:
     for line in f.readlines():
         print(line.strip())
