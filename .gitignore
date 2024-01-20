@@ -1,11 +1,7 @@
 wandb/
-logs/
 outputs/
-*outputs.txt
-checkpoints/
-data/multilexnorm/
-data/wiki/
 data/wikitext-103/
+data/wiki/
 data/lexnorm/
 data/noise/*.json
 pretrained/

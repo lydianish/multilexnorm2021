@@ -3,8 +3,6 @@ trainer:
     total_batch_size: 128
     optimizer: adafactor
     validate_each: 1
-    n_gpus: 1
-    checkpoint: best
 
     lr_decay:
         type: inverse_sqrt
@@ -26,11 +24,10 @@ dataset:
     filter: alnum
     lowercase: true
     batch_size: 32
-    threads: 16
+    threads: 4
     tokenizer: google/byt5-small
     encoder_max_length: 200
     decoder_max_length: 32
-    train_on_dev: true
 
     noise_probs:
         multiplier: 1.2
@@ -61,5 +58,3 @@ model:
     pretrained_lm: google/byt5-small
     weight_decay: 0.0
     n_beams: 1
-
-seed: 42

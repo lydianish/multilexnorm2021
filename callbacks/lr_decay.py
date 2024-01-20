@@ -8,7 +8,7 @@ class LRDecay(pl.Callback):
         self.decay_factor = self.base * self.warmup_steps ** 0.5
         self.finetune_learning_rate = args.finetune_learning_rate
 
-    def on_train_batch_start(self, trainer, pl_module, batch, batch_idx):
+    def on_train_batch_start(self, trainer, pl_module, batch, batch_idx, dataloader_idx):
         if pl_module.is_finetuning:
             lr = self.finetune_learning_rate
         else:
@@ -22,4 +22,4 @@ class LRDecay(pl.Callback):
 
         for g in pl_module.optimizer.param_groups:
             g['lr'] = lr
-        trainer.logger.experiment.add_scalar("learning_rate", lr)
+        trainer.logger.agg_and_log_metrics({"learning_rate": lr})

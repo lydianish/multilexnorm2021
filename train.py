@@ -24,8 +24,8 @@ if __name__ == "__main__":
     timestamp = f"{datetime.datetime.today():%m-%d-%y_%H-%M-%S}"
     directory = f"outputs/{args.dataset.language}_{args.model.pretrained_lm.split('/')[-1]}_{timestamp}"
     predictions_directory = f"{directory}/test_predictions"
-    os.makedirs(directory, exist_ok=True)
-    os.makedirs(predictions_directory, exist_ok=True)
+    os.mkdir(directory)
+    os.mkdir(predictions_directory)
 
     if args.dataset.train_on_dev:
         name = f"{args.dataset.language}_{args.seed}_dev_{args.dataset.mode}"
@@ -34,17 +34,15 @@ if __name__ == "__main__":
         name = f"{args.model.pretrained_lm.split('/')[-1]}_{args.dataset.language}_{args.dataset.mode}"
         tags = [args.model.pretrained_lm, args.dataset.mode, args.dataset.language]
 
-    tensorboard_logger = pl.loggers.TensorBoardLogger('logs/', name="lex_norm")
-    tensorboard_logger.log_hyperparams(args.state_dict())
-#    wandb_logger = pl.loggers.WandbLogger(name=name, project="lex_norm", tags=tags)
-#    wandb_logger.log_hyperparams(args.state_dict())
+    wandb_logger = pl.loggers.WandbLogger(name=name, project="lex_norm", tags=tags)
+    wandb_logger.log_hyperparams(args.state_dict())
     print(f"\nCONFIG:\n{args}")
 
     data = TrainingData(args)
     model = Model(args, data)
 
     trainer = pl.Trainer(
-        accumulate_grad_batches=args.trainer.total_batch_size // args.dataset.batch_size, logger=tensorboard_logger,
+        accumulate_grad_batches=args.trainer.total_batch_size // args.dataset.batch_size, logger=wandb_logger,
         max_epochs=args.trainer.n_epochs, check_val_every_n_epoch=args.trainer.validate_each,
         callbacks=[
             LRDecay(args.trainer.lr_decay),
@@ -52,9 +50,7 @@ if __name__ == "__main__":
             ErrorCallback(args, directory, data.valid_set),
             DelayFinetuning(args.trainer.delay_finetuning, data),
             CheckpointCallback(args)
-        ],
-        accelerator='gpu',
-        devices=args.trainer.n_gpus
+        ]
     )
     trainer.fit(model)
 
@@ -64,12 +60,12 @@ if __name__ == "__main__":
     def inference(args, model, input_data, output_dir):
         args.dataset.path = f"data/multilexnorm/test-eval/test/{input_data}"
         if not os.path.isdir(output_dir):
-            os.makedirs(output_dir, exist_ok=True)
+            os.mkdir(output_dir)
 
         data = InferenceData(args)
         assembler = OutputAssembler(output_dir, args.trainer.output_callback, data.dataset)
-        #device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        #model = model.to(device)
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        model = model.to(device)
         model.eval()
 
         for i, batch in enumerate(data.dataloader):
@@ -81,7 +77,7 @@ if __name__ == "__main__":
 
     def all_inference(args, model, mode, n_beams):
         if not os.path.isdir(f"ablation/{mode}"):
-            os.makedirs(f"ablation/{mode}", exist_ok=True)
+            os.mkdir(f"ablation/{mode}")
 
         args.model.n_beams = n_beams
         inference(args, model, f"intrinsic_evaluation/{args.dataset.language}/test.norm.masked", f"ablation/{mode}/{args.dataset.language}_{n_beams}")

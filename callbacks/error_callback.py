@@ -24,12 +24,12 @@ class ErrorCallback(pl.Callback):
         _, predictions = open_dataset(f"{directory}/outputs.txt")
         lai, accuracy, error, precision, recall, f1 = self.error_processor(predictions, directory)
 
-        pl_module.log("valid/baseline_accuracy", lai, sync_dist=True)
-        pl_module.log("valid/accuracy", accuracy, sync_dist=True)
-        pl_module.log("valid/error", error, sync_dist=True)
-        pl_module.log("valid/precision", precision, sync_dist=True)
-        pl_module.log("valid/recall", recall, sync_dist=True)
-        pl_module.log("valid/f1", f1, sync_dist=True)
+        pl_module.log("valid/baseline_accuracy", lai)
+        pl_module.log("valid/accuracy", accuracy)
+        pl_module.log("valid/error", error)
+        pl_module.log("valid/precision", precision)
+        pl_module.log("valid/recall", recall)
+        pl_module.log("valid/f1", f1)
 
         if not self.save_best or error > self.best:
             directory = f"checkpoints/{self.language}/{self.model_name}_{self.mode}_{self.seed}_{'best' if self.save_best else 'last'}"
@@ -39,5 +39,5 @@ class ErrorCallback(pl.Callback):
 
         if error > self.best:
             self.best = error
-            pl_module.logger.experiment.add_scalar("error", self.best)
+            pl_module.logger.experiment.summary["error"] = self.best
             pl_module.best = self.best
