@@ -15,11 +15,8 @@ class InferenceDataset(AbstractDataset):
         sentence_index, word_index = self.indexer.get_indices(index)
 
         raw = self.inputs[sentence_index]
-        # This is a hack for compatibility with new transformers
-        raw = ' '.join(raw[:word_index]) + "<extra_id_124>" + raw[word_index] + "<extra_id_123>" + ' '.join(raw[word_index+1:])
-        # Original:
-        # raw = raw[:word_index] + ["<extra_id_0>", raw[word_index], "<extra_id_1>"] + raw[word_index+1:]
-        # raw = ' '.join(raw)
+        raw = raw[:word_index] + ["<extra_id_0>", raw[word_index], "<extra_id_1>"] + raw[word_index+1:]
+        raw = ' '.join(raw)
 
         return raw, sentence_index, word_index
 

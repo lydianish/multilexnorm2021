@@ -8,7 +8,7 @@ data/wiki/
 data/wikitext-103/
 data/lexnorm/
 data/noise/*.json
-model/*/
+pretrained/
 LEX-NORM.o*
 .vscode/
 
