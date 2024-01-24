@@ -7,6 +7,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input-file", help="path to input file to normalize", type=str, required=True)
     parser.add_argument("--basedir", help="path to base directory", type=str, default="/content/multilexnorm2021")
+    parser.add_argument("--last-line", help="when resuming normalization, number of last line that was processed", type=str, default=0)
     script_args = parser.parse_args()
 
     sys.path.append(script_args.basedir)
@@ -20,5 +21,5 @@ if __name__ == "__main__":
     #args.model.pretrained_lm = args.dataset.tokenizer = path
 
     print(f"Normalizing {script_args.input_file}...")
-    normalize_file(script_args.input_file, args, device)
+    normalize_file(script_args.input_file, args, device, script_args.last_line)
     print("Done...")
