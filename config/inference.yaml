@@ -8,7 +8,7 @@ trainer:
 
 dataset:
     language: en
-    batch_size: 32
+    batch_size: 1
     threads: 1
     tokenizer: ufal/byt5-small-multilexnorm2021-en
 
