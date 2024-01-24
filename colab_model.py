@@ -96,21 +96,21 @@ def normalize_file(input_file, args, device):
   aligned_input_file = os.path.join(os.path.dirname(input_file), "aligned." + os.path.basename(input_file))
   aligned_output_file = os.path.join(os.path.dirname(input_file), "ufal-aligned." + os.path.basename(input_file))
   with open(input_file) as f:
-    lines = f.readlines()
-  tokens = [tokenizeRawTweetText(line.strip()) for line in lines]
-  data = Data(tokens, args)
-  assembler = OutputAssembler("outputs", args, data.dataset)
-  model = Model(args, data).to(device)
-  for i, batch in enumerate(data.dataloader):
-      batch = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in batch.items()}
-      output = model.generate(batch)
-      assembler.step(output)
-  assembler.flush()
-  with open("outputs/outputs.txt") as f1, open(aligned_input_file, 'a') as f2, open(aligned_output_file, 'a') as f3:
-      for line in f1:
-        if line != '\n':
-          split_line = line.split('\t')
-          f2.write(split_line[0].strip())
-          f3.write(split_line[1].strip())
-        f2.write('\n')
-        f3.write('\n')
+    for line in f:
+      tokens = [tokenizeRawTweetText(line.strip())]
+      data = Data(tokens, args)
+      assembler = OutputAssembler("outputs", args, data.dataset)
+      model = Model(args, data).to(device)
+      for i, batch in enumerate(data.dataloader):
+          batch = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in batch.items()}
+          output = model.generate(batch)
+          assembler.step(output)
+      assembler.flush()
+      with open("outputs/outputs.txt") as f1, open(aligned_input_file, 'a') as f2, open(aligned_output_file, 'a') as f3:
+          for line in f1:
+            if line.strip():
+              split_line = line.split('\t')
+              f2.write(split_line[0].strip())
+              f3.write(split_line[1].strip())
+            f2.write('\n')
+            f3.write('\n')

@@ -19,4 +19,6 @@ if __name__ == "__main__":
     #path = "/gpfswork/rech/rnh/udc54vm/multilexnorm2021/2.1.0/pretrained/ufal/byt5-small-multilexnorm2021-en"
     #args.model.pretrained_lm = args.dataset.tokenizer = path
 
+    print(f"Normalizing {script_args.input_file}...")
     normalize_file(script_args.input_file, args, device)
+    print("Done...")

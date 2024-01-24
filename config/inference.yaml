@@ -8,8 +8,8 @@ trainer:
 
 dataset:
     language: en
-    batch_size: 64
-    threads: 8
+    batch_size: 32
+    threads: 1
     tokenizer: ufal/byt5-small-multilexnorm2021-en
 
 model:
