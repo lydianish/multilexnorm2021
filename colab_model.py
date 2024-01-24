@@ -94,7 +94,7 @@ class Model(nn.Module):
 
 def normalize_file(input_file, args, device, N):
     aligned_input_file = os.path.join(os.path.dirname(input_file), "aligned." + os.path.basename(input_file))
-    aligned_output_file = os.path.join(os.path.dirname(input_file), "ufal-aligned." + os.path.basename(input_file))
+    aligned_output_file = os.path.join(os.path.dirname(input_file), "ufal.aligned." + os.path.basename(input_file))
     n = 0
     with open(input_file) as f:
         for line in f:
