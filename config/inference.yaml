@@ -8,10 +8,10 @@ trainer:
 
 dataset:
     language: en
-    batch_size: 32
-    threads: 1
-    tokenizer: /gpfswork/rech/rnh/udc54vm/multilexnorm2021/pretrained/ufal/byt5-small-multilexnorm2021-en
+    batch_size: 64
+    threads: 8
+    tokenizer: ufal/byt5-small-multilexnorm2021-en
 
 model:
-    pretrained_lm: /gpfswork/rech/rnh/udc54vm/multilexnorm2021/pretrained/ufal/byt5-small-multilexnorm2021-en
+    pretrained_lm: ufal/byt5-small-multilexnorm2021-en
     n_beams: 16

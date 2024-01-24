@@ -1,3 +1,4 @@
+import os
 from utility.twokenize import tokenizeRawTweetText
 import torch
 import math
@@ -7,10 +8,6 @@ from transformers import T5ForConditionalGeneration
 
 import warnings
 warnings.filterwarnings('ignore')
-
-import sys
-#sys.path.append("/home/lnishimw/scratch/multilexnorm2021")
-sys.path.append("/gpfswork/rech/rnh/udc54vm/multilexnorm2021")
 
 from config.params import Params
 from data.inference_data import CollateFunctor
@@ -74,7 +71,7 @@ class Model(nn.Module):
         outputs = self.model.generate(
             input_ids=batch["input_ids"], attention_mask=batch["attention_mask"],
             num_beams=n_beams, num_return_sequences=n_beams,
-            repetition_penalty=1.0, length_penalty=1.0, max_length=32,
+            repetition_penalty=1.0, length_penalty=1.0, max_length=512,
             output_scores=True, return_dict_in_generate=True
         )
 
@@ -95,31 +92,25 @@ class Model(nn.Module):
         }
         return out_dict
 
-
-args = Params().load(["--config", "config/inference.yaml"])
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-sentences = [
-    "yo hv to let ppl decide wat dey wanna do",
-    "fyrst sntnce",
-    "scond one .",
-    "and yet another one of them sentencesss"
-]
-
-tokens = [tokenizeRawTweetText(sentence) for sentence in sentences]
-
-data = Data(tokens, args)
-assembler = OutputAssembler(".", args, data.dataset)
-model = Model(args, data).to(device)
-model.eval()
-
-for i, batch in enumerate(data.dataloader):
-    batch = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in batch.items()}
-    output = model.generate(batch)
-    assembler.step(output)
-
-assembler.flush()
-
-with open("outputs.txt") as f:
-    for line in f.readlines():
-        print(line.strip())
+def normalize_file(input_file, args, device):
+  aligned_input_file = os.path.join(os.path.dirname(input_file), "aligned." + os.path.basename(input_file))
+  aligned_output_file = os.path.join(os.path.dirname(input_file), "ufal-aligned." + os.path.basename(input_file))
+  with open(input_file) as f:
+    lines = f.readlines()
+  tokens = [tokenizeRawTweetText(line.strip()) for line in lines]
+  data = Data(tokens, args)
+  assembler = OutputAssembler("outputs", args, data.dataset)
+  model = Model(args, data).to(device)
+  for i, batch in enumerate(data.dataloader):
+      batch = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in batch.items()}
+      output = model.generate(batch)
+      assembler.step(output)
+  assembler.flush()
+  with open("outputs/outputs.txt") as f1, open(aligned_input_file, 'a') as f2, open(aligned_output_file, 'a') as f3:
+      for line in f1:
+        if line != '\n':
+          split_line = line.split('\t')
+          f2.write(split_line[0].strip())
+          f3.write(split_line[1].strip())
+        f2.write('\n')
+        f3.write('\n')
